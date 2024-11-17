@@ -7,6 +7,10 @@ export const registerUser = async (nom: string,email: string, motDePasse: string
     if (userExist) {
      throw new Error("L\'utilisateur existe deja. ");
     }
+    if (!nom || !email || !motDePasse) {
+      throw new Error('Tous les champs sont obligatoires : nom, email, motDePasse');
+    }
+    
     // run inside `async` function
     const hashedPassword = await bcrypt.hash(motDePasse,10);
     const newUser = await prisma.user.create({
@@ -18,5 +22,4 @@ export const registerUser = async (nom: string,email: string, motDePasse: string
   });
   return newUser
   
-  const users = await prisma.user.findMany()
 }
