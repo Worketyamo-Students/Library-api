@@ -19,3 +19,12 @@ model User {
   email      String @unique
   motDePasse String
 }
+
+model Book{
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
+  author    String
+  description   String
+  publishYear   Int
+  ISBN    String
+}
