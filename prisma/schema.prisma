@@ -28,3 +28,10 @@ model Book{
   publishYear   Int
   ISBN    String
 }
+model Borrow {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  livreID      String
+  userID       String
+  dateEmprunt  DateTime @default(now())
+  dateRetour   DateTime?
+}
