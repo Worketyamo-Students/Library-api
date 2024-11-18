@@ -78,4 +78,27 @@ export const getUserProfile = async (req:Request, res:Response) =>{
     } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR)
     }
-}
+};
+
+ export const updateUserProfile = async (req:Request, res:Response) =>{
+    const {nom,email,motDePasse} = req.body;
+
+    try {
+        const data:any = {};
+        if(nom) data.nom = nom;
+        if(email) data.email = email;
+        if(motDePasse) data.motDePasse = await bcrypt.hash(motDePasse,10);
+
+        const updatedUser = await prisma.user.update({
+            where: {id:(req as any).user.id},
+            data,
+        });
+
+        res.status(StatusCodes.OK).json({
+            message:'Profil mis a jour avec succès',
+            user: updatedUser,
+        });
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:error})
+    }
+ };
