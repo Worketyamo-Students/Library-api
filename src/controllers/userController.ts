@@ -3,12 +3,7 @@ import bcrypt from 'bcryptjs';
 import {Request,Response} from 'express';
 import { registerUser } from '../services/userService';
 import { prisma } from '../prisma/client';
-import {
-	ReasonPhrases,
-	StatusCodes,
-	getReasonPhrase,
-	getStatusCode,
-} from 'http-status-codes';
+import { StatusCodes} from 'http-status-codes';
 
 export const signupUser = async (req:Request,res:Response) =>{ 
     const {nom,email,motDePasse} = req.body;
@@ -24,7 +19,8 @@ export const signupUser = async (req:Request,res:Response) =>{
             },
         });
     } catch (error) {
-        res.status(400).json({message: error})
+        res.status(400).json({message: error});
+        return;
     }
 }
  
@@ -54,6 +50,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         });
     } catch (error) {
         res.status(500).json({ message: error });
+        return;
     }
 };
 
@@ -61,6 +58,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
 export const logoutUser = (req:Request, res:Response) =>{
     res.status(200).json({message: 'Déconnexion réussi'});
+    return;
 };
 
 export const getUserProfile = async (req:Request, res:Response) =>{
@@ -77,6 +75,7 @@ export const getUserProfile = async (req:Request, res:Response) =>{
         res.status(StatusCodes.OK).json({user});
     } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        return;
     }
 };
 
@@ -100,5 +99,17 @@ export const getUserProfile = async (req:Request, res:Response) =>{
         });
     } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:error})
+        return;
     }
  };
+
+ export const deleteUserProfile = async (req: Request, res:Response) =>{
+  try {
+    await prisma.user.delete({
+        where: {id:(req as any).user.id},
+    });
+    res.status(StatusCodes.OK).json({message:'Compte supprimé avec succès'});
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:error});
+  }  
+ }
