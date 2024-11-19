@@ -1,3 +1,4 @@
+```markdown
 # Online Library API
 
 ## 📚 Description
@@ -13,6 +14,7 @@ Cette API REST permet de gérer une bibliothèque en ligne. Les fonctionnalités
 - **Base de données** : MongoDB avec Prisma ORM
 - **Versionnement** : Git + GitHub
 
+---
 
 ## 🚀 Fonctionnalités
 
@@ -24,9 +26,9 @@ Cette API REST permet de gérer une bibliothèque en ligne. Les fonctionnalités
 
 ### Livres
 - **Liste des livres** : Récupérer tous les livres disponibles.
-- **Ajout d'un livre** : Ajouter un nouveau livre.
-- **Mise à jour d'un livre** : Modifier les informations d'un livre.
-- **Suppression d'un livre** : Supprimer un livre.
+- **Ajout d'un livre** : Ajouter un nouveau livre à la bibliothèque.
+- **Mise à jour d'un livre** : Modifier les informations d'un livre existant.
+- **Suppression d'un livre** : Supprimer un livre de la bibliothèque.
 
 ---
 
@@ -35,19 +37,20 @@ Cette API REST permet de gérer une bibliothèque en ligne. Les fonctionnalités
 ```
 library-api/
 ├── prisma/
-│   ├── schema.prisma    
-│   ├── controllers/     
+│   ├── schema.prisma    # Schéma Prisma pour la base de données
+├── src/
+│   ├── controllers/     # Logique métier pour chaque ressource
 │   │   ├── userController.ts
 │   │   ├── bookController.ts
-│   ├── routes/          
+│   ├── routes/          # Définition des routes de l'API
 │   │   ├── userRoutes.ts
 │   │   ├── bookRoutes.ts
-│   ├── prismaClient.ts  
-│   ├── server.ts        
-├── .env                 
-├── package.json         
-├── tsconfig.json        
-├── README.md            
+│   ├── prismaClient.ts  # Configuration Prisma
+│   ├── server.ts        # Point d'entrée principal
+├── .env                 # Variables d'environnement (base de données)
+├── package.json         # Dépendances et scripts
+├── tsconfig.json        # Configuration TypeScript
+├── README.md            # Documentation du projet
 ```
 
 ---
@@ -66,7 +69,7 @@ library-api/
 
 1. **Cloner le projet** :
    ```bash
-   git clone https://github.com/Worketyamo-Students/Library-api.git
+   git clone https://github.com/<votre-utilisateur>/library-api.git
    cd library-api
    ```
 
@@ -120,7 +123,22 @@ library-api/
 - **Profil** : `GET /users/profile` (avec token JWT dans l'en-tête `Authorization`).
 
 #### 2. **Gestion des Livres**
+
 - **Liste des livres** : `GET /books`.
+  - Aucune donnée requise. Retourne une liste de livres au format suivant :
+    ```json
+    [
+      {
+        "id": "123456789",
+        "titre": "1984",
+        "auteur": "George Orwell",
+        "description": "Un roman dystopique",
+        "anneePublication": 1949,
+        "ISBN": "123456789"
+      }
+    ]
+    ```
+
 - **Ajout d’un livre** : `POST /books`.
   - Corps :
     ```json
@@ -130,6 +148,53 @@ library-api/
       "description": "Un roman dystopique",
       "anneePublication": 1949,
       "ISBN": "123456789"
+    }
+    ```
+  - Réponse :
+    ```json
+    {
+      "message": "Livre ajouté avec succès",
+      "book": {
+        "id": "123456789",
+        "titre": "1984",
+        "auteur": "George Orwell",
+        "description": "Un roman dystopique",
+        "anneePublication": 1949,
+        "ISBN": "123456789"
+      }
+    }
+    ```
+
+- **Mise à jour d’un livre** : `PUT /books/:id`.
+  - Exemple d’ID : `/books/123456789`.
+  - Corps (données à mettre à jour) :
+    ```json
+    {
+      "titre": "1984 - Nouvelle Édition",
+      "description": "Mise à jour de la description."
+    }
+    ```
+  - Réponse :
+    ```json
+    {
+      "message": "Livre mis à jour avec succès",
+      "book": {
+        "id": "123456789",
+        "titre": "1984 - Nouvelle Édition",
+        "auteur": "George Orwell",
+        "description": "Mise à jour de la description.",
+        "anneePublication": 1949,
+        "ISBN": "123456789"
+      }
+    }
+    ```
+
+- **Suppression d’un livre** : `DELETE /books/:id`.
+  - Exemple d’ID : `/books/123456789`.
+  - Réponse :
+    ```json
+    {
+      "message": "Livre supprimé avec succès"
     }
     ```
 
@@ -146,3 +211,4 @@ library-api/
 ## 📝 Auteur
 
 Créé par Dimitri Tedom alias [SnowDev](https://github.com/DimitriTedom). Contactez-moi à [dimitritedom@gmail.com](mailto:dimitritedom@gmail.com) pour toute question !
+---
