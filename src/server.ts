@@ -1,5 +1,7 @@
 import app from "./app";
 import {prisma} from './prisma/client';
+import cron from "node-cron";
+import {sendReminders} from './jobs/reminderJob'
 const PORT = process.env.PORT || 3000;
 
 (async ()=>{
@@ -15,3 +17,8 @@ const PORT = process.env.PORT || 3000;
         process.exit(1);
     }
 })();
+
+cron.schedule("0 8 * * *", () => {
+    console.log("Envoi des rappels de retour de livres...");
+    sendReminders();
+});

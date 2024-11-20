@@ -2,12 +2,13 @@ import express from "express";
 import bodyParser from "body-parser";
 import userRoutes from './routes/userRoutes'
 import bookRoutes from './routes/bookRoutes'
+import { borrowBook } from "./controllers/borrowController";
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use('/users',userRoutes);
 app.use('/books',bookRoutes);
-app.use('/borrows',bookRoutes)
+app.use('/borrows',borrowBook)
 
 export default app;

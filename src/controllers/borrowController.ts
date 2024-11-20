@@ -47,6 +47,7 @@ export const borrowBook = async (req:Request, res:Response) =>{
             message:"Livre emprunté avec succès",
             loan: loan,
         });
+        return;
     } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message:"Erreur lors de l'emprunt."
@@ -81,9 +82,11 @@ export const returnBook = async (req:Request, res:Response) =>{
         });
         if (!borrow) {
             res.status(StatusCodes.NOT_FOUND).json({message:"Emprunt non Trouvé"});
+            return;
         }
         if (borrow?.dateRetour) {
             res.status(StatusCodes.BAD_REQUEST).json({message:"Le livre a deja été retourné"});
+            return;
         }
 
         await prisma.book.update({
@@ -114,10 +117,12 @@ export const returnBook = async (req:Request, res:Response) =>{
             message:"Livre retourné avec succès et Notifications envoyées.",
             borrow: updatedBorrow,
         });
+        return;
     } catch (error) {
         console.error(error);
         res.status(StatusCodes.BAD_REQUEST).json({
-            message:"Erreur lors du retour du  livre"
+            message:"Erreur lors du retour du  livre",
+            error:error,
         });
     }
 };
@@ -132,6 +137,7 @@ export const getUserBorrowHist = async (req:Request, res:Response) =>{
         });
         if (borrow.length === 0) {
             res.status(StatusCodes.NOT_FOUND).json({message:"Aucun emprunt trouvé pour cet utilisateur."});
+            return;
         }
         res.status(StatusCodes.OK).json(borrow);
     } catch (error) {
