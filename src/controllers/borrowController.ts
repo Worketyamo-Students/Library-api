@@ -76,3 +76,22 @@ export const returnBook = async (req:Request, res:Response) =>{
     }
 };
 
+export const getUserBorrowHist = async (req:Request, res:Response) =>{
+    try {
+        const {userIDreq} = req.params;
+
+        const borrow = await prisma.borrow.findMany({
+            where:{userID:userIDreq},
+            include:{livre:true}
+        });
+        if (borrow.length === 0) {
+            res.status(StatusCodes.NOT_FOUND).json({message:"Aucun emprunt trouvé pour cet utilisateur."});
+        }
+        res.status(StatusCodes.OK).json(borrow);
+    } catch (error) {
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message:"Erreur lors de la recuperation de l'historique"
+        });
+    }
+}
