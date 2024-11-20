@@ -19,6 +19,7 @@ model User {
   email      String @unique
   motDePasse String
   emprunts   Borrow[]
+  notificatons  Notification[]
 }
 
 model Book{
@@ -30,6 +31,7 @@ model Book{
   ISBN    String  @unique
   etat    String @default("disponible")
   emprunts  Borrow[]
+  notifications   Notification[]
 }
 model Borrow {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -39,4 +41,15 @@ model Borrow {
   dateRetour   DateTime?
   livre        Book     @relation(fields: [livreID],references: [id])
   user  User     @relation(fields: [userID],references: [id])
+}
+
+model Notification {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  userID    String  @db.ObjectId
+  livreID   String    @db.ObjectId
+  message   String
+  date      DateTime  @default(now())
+
+  user    User    @relation(fields: [userID],references: [id])
+  livre   Book    @relation(fields: [livreID],references: [id])
 }

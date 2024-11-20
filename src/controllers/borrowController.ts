@@ -1,3 +1,4 @@
+import nodemailer  from 'nodemailer';
 import { Request,Response } from "express";
 import { prisma } from "../prisma/client";
 import { StatusCodes } from "http-status-codes";
@@ -15,7 +16,16 @@ export const borrowBook = async (req:Request, res:Response) =>{
             });
             return;
         }
+        
         if (book.etat === "emprunté") {
+            await prisma.notification.create({
+                data:{
+                    userID: userID,
+                    livreID,
+                    message: `Vous avez réservé le livre "${book.title}"`,
+                },
+            });
+
             res.status(StatusCodes.BAD_REQUEST).json({message:"Le Livre est deja emprunté"});
             return;
         }
@@ -44,16 +54,38 @@ export const borrowBook = async (req:Request, res:Response) =>{
     }
 };
 
+const sendNotification = async (userEmail:string,message:string) =>{
+    const transporter = nodemailer.createTransport({
+        service:"gmail",
+        auth:{
+            user:process.env.EMAIL_USER,
+            pass:process.env.EMAIL_PASS,
+        }
+    });
+
+    await transporter.sendMail({
+        from:process.env.EMAIL_USER,
+        to:userEmail,
+        subject: "Notification de disponibilité de livre",
+        text:message,
+    });
+};
+
 export const returnBook = async (req:Request, res:Response) =>{
     try {
         const {id} = req.params;
 
         const borrow = await prisma.borrow.findUnique({
             where: {id},
+            include:{livre:true},
         });
         if (!borrow) {
-            res.status(StatusCodes.NOT_FOUND);
+            res.status(StatusCodes.NOT_FOUND).json({message:"Emprunt non Trouvé"});
         }
+        if (borrow?.dateRetour) {
+            res.status(StatusCodes.BAD_REQUEST).json({message:"Le livre a deja été retourné"});
+        }
+
         await prisma.book.update({
             where:{id: borrow?.livreID},
             data:{etat:"disponible"},
@@ -64,8 +96,22 @@ export const returnBook = async (req:Request, res:Response) =>{
             data: {dateRetour: new Date() },
         });
 
+        const reservations = await prisma.notification.findMany({
+            where:{livreID:borrow?.livreID},
+            include:{user:true},
+        });
+
+        for (let reservation of reservations) {
+            const message = `Bonjour Mr/Mme ${reservation.user.nom} Le livre ${borrow?.livre.title} est désormais disponible.`;
+            await sendNotification(reservation.user.email,message);
+            
+            await prisma.notification.delete({
+                where: {id:reservation.id},
+            });
+        }
+
         res.status(StatusCodes.OK).json({
-            message:"Livre retourné avec succès",
+            message:"Livre retourné avec succès et Notifications envoyées.",
             borrow: updatedBorrow,
         });
     } catch (error) {
