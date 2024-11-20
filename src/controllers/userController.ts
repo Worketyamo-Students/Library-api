@@ -108,8 +108,15 @@ export const getUserProfile = async (req:Request, res:Response) =>{
     await prisma.user.delete({
         where: {id:(req as any).user.id},
     });
-    res.status(StatusCodes.OK).json({message:'Compte supprimé avec succès'});
+    res.status(StatusCodes.OK).json({
+        success: true,
+        message:'Compte supprimé avec succès'
+    });
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:error});
+    console.log(error)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: `Internal server error: ${error}`
+    });
   }  
  }
