@@ -24,7 +24,7 @@ export const signupUser = async (req:Request,res:Response) =>{
     }
 }
  
-const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET || 'johanna';
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const { email, motDePasse } = req.body;
@@ -42,7 +42,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
             return; 
         }
 
-        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '2h' });
 
         res.status(200).json({
             Message: 'Connexion réussie',

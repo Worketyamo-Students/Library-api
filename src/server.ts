@@ -2,6 +2,8 @@ import app from "./app";
 import {prisma} from './prisma/client';
 import cron from "node-cron";
 import {sendReminders} from './jobs/reminderJob'
+require('dotenv').config();
+
 const PORT = process.env.PORT || 3000;
 
 (async ()=>{
@@ -13,7 +15,7 @@ const PORT = process.env.PORT || 3000;
             console.log(`Serveur en cours d\'exécution sur le port ${PORT}`);
         })
     } catch (error) {
-        console.error('Erreur lors de la cnnecion a la base de donnees',error);
+        console.error('Erreur lors de la connection a la base de donnees',error);
         process.exit(1);
     }
 })();

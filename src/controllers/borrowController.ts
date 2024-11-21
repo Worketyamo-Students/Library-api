@@ -45,7 +45,7 @@ export const borrowBook = async (req:Request, res:Response) =>{
 
         res.status(StatusCodes.CREATED).json({
             message:"Livre emprunté avec succès",
-            loan: loan,
+            Borrow: loan,
         });
         return;
     } catch (error) {
@@ -59,8 +59,8 @@ const sendNotification = async (userEmail:string,message:string) =>{
     const transporter = nodemailer.createTransport({
         service:"gmail",
         auth:{
-            user:process.env.EMAIL_USER,
-            pass:process.env.EMAIL_PASS,
+            user:process.env.EMAIL_USER || 'dimitritedom@gmail.com',
+            pass:process.env.EMAIL_PASS || 'klanoshi5',
         }
     });
 
